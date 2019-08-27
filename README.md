@@ -158,3 +158,8 @@ apply style to these new DOM elements from inline CSS.
 
 Turkle CSV is the data source. The format of Turkle CSV is explained above.
 
+## Contributors
+Listed in order of contribution:
+- [Tzu-Ray Su](https://github.com/ray1007)
+- [Elias Stengel-Eskin](https://github.com/esteng) 
+
