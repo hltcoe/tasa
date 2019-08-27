@@ -1,0 +1,54 @@
+.panel {
+    margin: 30px 30px 20px 30px;
+    padding: 20px;
+}
+
+.token {
+    margin: 2px 2px;
+    border: 3px solid #5550;
+}
+
+.activeToken {
+  color: #fff;
+  background-color: #3f51b5;
+}
+
+.boldedToken {
+    font-weight: bold;
+}
+
+.disabledToken {
+    color: #808080;
+}
+
+.touchedToken {
+  /*border: 5px solid #0f0145;*/
+  /*border: 5px solid #8596fa;*/
+  border: 3px solid #555;
+}
+
+.blurryToken {
+  filter: blur(5px);
+}
+
+.correctToken {
+  /*border: 5px solid #0f0145;*/
+  /*border: 5px solid #8596fa;*/
+  border: 3px solid #0f0;
+}
+
+.wrongToken {
+  /*border: 5px solid #0f0145;*/
+  /*border: 5px solid #8596fa;*/
+  border: 3px solid #f00;
+}
+
+
+.divider {
+    margin: 20px 100px;
+}
+
+.selected {
+    background-color: #61dafb;
+    color: #61dafb;
+}

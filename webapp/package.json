@@ -1,0 +1,35 @@
+{
+  "name": "anno_app",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@material-ui/core": "^4.0.2",
+    "@material-ui/lab": "^4.0.0-alpha.15",
+    "axios": "^0.18.0",
+    "jss": "^9.8.7",
+    "material-ui": "^1.0.0-beta.47",
+    "prop-types": "^15.6.2",
+    "react": "^16.6.3",
+    "react-dom": "^16.6.3",
+    "react-scripts": "2.1.1"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "buildTemplates": "react-scripts build && ./make-turkle-template.sh && ./make-mturk-template.sh",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ],
+  "devDependencies": {
+    "webpack": "^4.19.1"
+  }
+}
