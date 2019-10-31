@@ -1,4 +1,4 @@
-import React, {PureComponent} from "react";
+import React from "react";
 import PropTypes from "prop-types";
 
 import Button from "@material-ui/core/Button/Button";
@@ -40,7 +40,7 @@ class SourceLangPanel extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.hasFocus == this.props.hasFocus)
+    if (nextProps.hasFocus === this.props.hasFocus)
       return;
     this.setKeyHandling(nextProps.hasFocus);
   }
@@ -83,6 +83,8 @@ class SourceLangPanel extends React.Component {
           newPos += 1;
         }
         this.props.moveSrcPos(newPos);
+        break;
+      default:
     }
   };
 
@@ -164,6 +166,7 @@ class SourceLangPanel extends React.Component {
 
       if (showFeedback) {
         // if tokens[idx] is correct.
+        // eslint-disable-next-line no-loop-func
         const correct = selections[idx].every((s,i) => s === goldAlignment[idx][i]);
         if (correct)
           className += ` ${classes.correctToken}`;

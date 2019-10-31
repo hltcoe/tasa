@@ -112,7 +112,7 @@ class App extends Component {
       configObj = {};
       return;
     } else if (version.MAJOR !== configObj.version.MAJOR) {
-      var msg = `Incompatible CSV file. React code major version (${version.MAJOR}) !== \`configObj\` major version (${configObj.version.MAJOR}).`
+      msg = `Incompatible CSV file. React code major version (${version.MAJOR}) !== \`configObj\` major version (${configObj.version.MAJOR}).`
       this.setState({srcTokens: msg.split(" "),
                      tarTokens: []});
       console.log(msg)
@@ -366,7 +366,7 @@ class App extends Component {
         srcIsBlurry[i] = true;
 
     var tarIsBlurry = this.state.tarIsBlurry;
-    for (var i = 0; i < tarIsBlurry.length; i++)
+    for (i = 0; i < tarIsBlurry.length; i++)
       if (!this.state.selections[idx][i])
         tarIsBlurry[i] = true;
 
@@ -397,12 +397,12 @@ class App extends Component {
 
     // update `srcIsBlurry` & `tarIsBlurry`.
     var tarIsBlurry = this.state.tarIsBlurry;
-    for (var i = 0; i < tarIsBlurry.length; i++)
+    for (i = 0; i < tarIsBlurry.length; i++)
       if (i !== idx)
         tarIsBlurry[i] = true;
 
     var srcIsBlurry = this.state.srcIsBlurry;
-    for (var i = 0; i < srcIsBlurry.length; i++)
+    for (i = 0; i < srcIsBlurry.length; i++)
       if (!this.state.selections[i][idx])
         srcIsBlurry[i] = true;
 
