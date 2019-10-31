@@ -1,0 +1,9 @@
+build-templates:
+  image: node:latest
+  stage: test
+  script:
+    - cd webapp
+    - npm install
+    - npm run buildTemplates
+  tags:
+    - docker
