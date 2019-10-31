@@ -6,8 +6,8 @@ import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Grid from "@material-ui/core/Grid";
 import Paper from '@material-ui/core/Paper';
+import Slider from '@material-ui/core/Slider';
 import Typography from '@material-ui/core/Typography';
-import Slider from '@material-ui/lab/Slider';
 
 const styles = {
   root: {
