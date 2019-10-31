@@ -3,3 +3,4 @@ webapp/node_modules/
 webapp/build/
 webapp/package-lock.json
 webapp/anno-app-*.html
+*~
