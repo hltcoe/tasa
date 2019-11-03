@@ -245,7 +245,7 @@ class App extends Component {
       console.log("create new <input> element for additionalData.")
       var input = document.createElement("INPUT");
       input.setAttribute("id", "additionalDataInput");
-      input.setAttribute("name", "additionalDataInput");
+      input.setAttribute("name", "additionalData");
       input.setAttribute("type", "text");
       const node = document.querySelector("#alignmentInput");
       if (node) {
