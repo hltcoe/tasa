@@ -11,6 +11,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   parameters `src_text_dir` and `tar_text_dir`.
 
 ### Changed
+- The default values for the Translation Quality sliders has been
+  changed from 3 to 50 (on a scale of 1-100)
+
 ### Deprecated
 ### Removed
 ### Fixed
