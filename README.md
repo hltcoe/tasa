@@ -101,13 +101,13 @@ fields:
     An array with `src_tokens.length` subarrays, where each subarray
     has `tar_tokens.length` boolean values that stores the gold
     standard alignment between `src_tokens` and `tar_tokens`.
-	If provided, the UI will display a button labeled "CHECK GOLD
+    If provided, the UI will display a button labeled "CHECK GOLD
     ALIGNMENT".  Once the button is clicked, the UI will change the
     border color of the token buttons to indicate the gold standard
     alignment.  Any source token that is aligned to a target token(s)
     will now have a red border.  When a source token is active, the
     aligned target token(s) border will turn red.
-	Usually only the first 5-10 sentences will have this field.
+    Usually only the first 5-10 sentences will have this field.
   - `src_head_inds` [array]: Optional array of token indices. If
     present, only tokens identified in this array can be aligned with
     tokens in the target sentence.  For source tokens that can be aligned,
@@ -133,17 +133,17 @@ fields:
     (which can be restricted using `src_head_inds`).
   - `tar_spans` [array of arrays]: Same as above, for target side highlight spans.
   - `src_text_dir` [string]: Set
-     [HTML text direction property](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/dir)
-     for source sentence, determining whether source tokens are
-     displayed left-to-right (for languages like English) or
-     right-to-left (for languages like Arabic).  Possible values are
-     `auto`, `ltr` and `rtl`.  Default: `auto`.
+    [HTML text direction property](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/dir)
+    for source sentence, determining whether source tokens are
+    displayed left-to-right (for languages like English) or
+    right-to-left (for languages like Arabic).  Possible values are
+    `auto`, `ltr` and `rtl`.  Default: `auto`.
   - `tar_text_dir` [string]: Set
-     [HTML text direction property](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/dir)
-     for target sentence, determining whether target tokens are
-     displayed left-to-right (for languages like English) or
-     right-to-left (for languages like Arabic).  Possible values are
-     `auto`, `ltr` and `rtl`.  Default: `auto`.
+    [HTML text direction property](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/dir)
+    for target sentence, determining whether target tokens are
+    displayed left-to-right (for languages like English) or
+    right-to-left (for languages like Arabic).  Possible values are
+    `auto`, `ltr` and `rtl`.  Default: `auto`.
   - `translation_quality_scale` [integer]:  If supplied, the value of
     this parameter should always be set to 100.  Supplying a value will
     cause the UI to display two slider controls for capturing the
