@@ -187,7 +187,7 @@ class TargetLangPanel extends React.Component {
     return (
       <Paper className="panel" elevation={4}>
         <Grid container spacing={2}>
-          <Grid item xs={11}>
+          <Grid item xs={11} dir={this.props.config.targetTextDirection}>
             {tokenChips}
           </Grid>
           <Grid item xs={1}>

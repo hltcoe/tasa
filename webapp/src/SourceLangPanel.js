@@ -228,7 +228,7 @@ class SourceLangPanel extends React.Component {
     return (
       <Paper className="panel" elevation={4}>
         <Grid container spacing={2}>
-          <Grid item xs={11}>
+          <Grid item xs={11} dir={this.props.config.sourceTextDirection}>
             {tokenChips}
           </Grid>
           <Grid item xs={1}>

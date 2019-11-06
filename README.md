@@ -103,6 +103,18 @@ fields:
     in this list can be aligned with tokens in the target sentence.
   - `tar_head_inds` - A JSON array of token indices.  Only tokens
     in this list can be aligned with tokens in the source sentence.
+  - `src_text_dir` [string]: Set
+     [HTML text direction property](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/dir)
+     for source sentence, determining whether source tokens are
+     displayed left-to-right (for languages like English) or
+     right-to-left (for languages like Arabic).  Possible values are
+     `auto`, `ltr` and `rtl`.  Default: `auto`.
+  - `tar_text_dir` [string]: Set
+     [HTML text direction property](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/dir)
+     for target sentence, determining whether target tokens are
+     displayed left-to-right (for languages like English) or
+     right-to-left (for languages like Arabic).  Possible values are
+     `auto`, `ltr` and `rtl`.  Default: `auto`.
   - `font_size` - A string to control tokens font size. Use the follwoing 
   - `gold_alignment` - A JSON boolean "matrix" same as `alignment`. Add
     this field for annotator training, usually only the first 5~10 sentences
