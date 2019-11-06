@@ -1,4 +1,4 @@
-# TASA - Translation And Structural Alignment (v1.1.2)
+# TASA - Translation And Structural Alignment (v1.1.3pre)
 
 TASA is a [React](https://reactjs.org) web application for translating
 and aligning sentence pairs.
@@ -19,13 +19,14 @@ This will download the dependencies specified in
 
 ## Building
 
-Inside the `webapp/` directory, the TASA HTML templates is generated
-using the command:
+From the `webapp/` directory, generate the TASA HTML templates using
+the command:
 
     npm run buildTemplates
 
 This will create a React web application in the `webapp/build/`
-directory, and generate `webapp/anno-app-{turkle|mturk}.html`.
+directory, and generate the HTML templates
+`webapp/anno-app-{turkle|mturk}.html`.
 
 ## Using TASA with Turkle or Mechanical Turk
 
@@ -38,7 +39,7 @@ HTML template file or published on public CDNs.
 
 TASA has separate scripts for generating
 Mechanical Turk and Turkle templates.  Both scripts insert the
-React JavaScript files  into the HTML template.
+React JavaScript files into the HTML template.
 
 - The [webapp/make-turkle-template.sh](webapp/make-turkle-template.sh)
   script copies built CSS and JS bundles into the HTML template
@@ -55,7 +56,8 @@ React JavaScript files  into the HTML template.
   template.
 
 Before running TASA on Turkle, adjust the HTML template size limit
-by editing this setting in `turkle_site/settings.py` on local install. [ref](https://gitlab.hltcoe.jhu.edu/research/turkle/issues/217)
+by editing this setting in `turkle_site/settings.py` on local install.
+
 ```python
 # max size of template in KB
 TURKLE_TEMPLATE_LIMIT = 1024 # default is 64. change it to 1024
@@ -70,10 +72,10 @@ You may run TASA on your local machine in developement using the command:
     npm start
 
 This command will open up a development server on port 3000. You may edit the 
-React code and simlutaneously see how the UI changes. It is useful when you want
+React code and simultaneously see how the UI changes. It is useful when you want
 to develop new feature, as you don't need to load the template into Turkle for 
 every change you made. In this mode, TASA uses the sentence pair and configuration
- data stored in `webapp/src/mock.json` as input and renders the UI accordingly. 
+data stored in `webapp/src/mock.json` as input and renders the UI accordingly.
 
 
 ### CSV format for Turk templates
@@ -81,28 +83,55 @@ every change you made. In this mode, TASA uses the sentence pair and configurati
 The Turk HTML templates are designed to work with a CSV file with the
 fields:
 
-- `src_tokens` - A JSON array of tokenized source sentence. 
-- `tar_tokens` - A JSON array of tokenized target sentence. 
-- `config_obj` - A JSON object containing the following entries. 
-  **Leave out the entry name if it is unused, TASA will automatically use the default value**.
-  - `alignment` - One could set initial alignments, so annotator could 
-    begin with automatically produced results. It is a JSON boolean 
-    "matrix" (list of lists) where each value in the sublist is either 
-    `true` or `false`.  If `src_tokens` has a sentence with E tokens
-    and `tar_tokens` has a sentence with Z tokens, then `alignment` is a
-    list with E sublists, and each sublist has Z values, where each
-    value is either `true` or `false`.
-  - `src_enable_retokenize` - Either `true` or `false`
-  - `tar_enable_retokenize` - Either `true` or `false`
-  - `src_spans` - Source side substring spans that should be highlighted.
-    It must be sorted with ascending order, and not contain any overlap.
-    The format is a list of length-2 lists `[begin, end]`, where `begin` is
-    inclusive, while `end` is exclusive.
-  - `tar_spans` - Same as above, for target side highlight spans.
-  - `src_head_inds` - A JSON array of token indices. Only tokens
-    in this list can be aligned with tokens in the target sentence.
-  - `tar_head_inds` - A JSON array of token indices.  Only tokens
-    in this list can be aligned with tokens in the source sentence.
+- `src_tokens` - A JSON array of token strings
+- `tar_tokens` - A JSON array of token strings
+- `config_obj` - A JSON object with the optional parameters:
+
+  - `alignment` [boolean matrix]: Optional initial alignments.
+    An array with `src_tokens.length` subarrays, where each subarray
+    has `tar_tokens.length` boolean values.
+  - `collect_comment` [boolean]: Whether or not the "Comment" box is
+    displayed.  Adding this attribute to `config_obj` will cause the
+    `additionalData` column to be added to the output CSV file.  The
+    column contains a JSON object.  The comment text (if non-empty) 
+    will be stored in the `comment` field of the object.
+    Default: `false`.
+  - `font_size` [string]: Font size.  Default: `''`.
+  - `gold_alignment` [boolean matrix]: Optional gold alignments.
+    An array with `src_tokens.length` subarrays, where each subarray
+    has `tar_tokens.length` boolean values that stores the gold
+    standard alignment between `src_tokens` and `tar_tokens`.
+	If provided, the UI will display a button labeled "CHECK GOLD
+    ALIGNMENT".  Once the button is clicked, the UI will change the
+    border color of the token buttons to indicate the gold standard
+    alignment.  Any source token that is aligned to a target token(s)
+    will now have a red border.  When a source token is active, the
+    aligned target token(s) border will turn red.
+	Usually only the first 5-10 sentences will have this field.
+  - `src_head_inds` [array]: Optional array of token indices. If
+    present, only tokens identified in this array can be aligned with
+    tokens in the target sentence.  For source tokens that can be aligned,
+    the token text is bolded.  For source tokens that cannot be aligned, the
+    token text is greyed out.
+  - `tar_head_inds` [array]: Optional array of token indices.  If
+    present, only tokens identified in this array can be aligned with
+    tokens in the source sentence.  For target tokens that can be aligned,
+    the token text is bolded.  For target tokens that cannot be aligned, the
+    token text is greyed out.
+  - `src_enable_retokenize` [boolean]: Whether or not Retokenize
+    button is displayed for Source sentence.  Default: `false`.
+  - `tar_enable_retokenize` [boolean]: Whether or not Retokenize
+    button is displayed for Target sentence.  Default: `false`.
+  - `src_spans` [array of arrays]: Optional list of source side spans
+    to be highlighted.  Each span will be highlighted in a different
+    color by changing the background color of the tokens in that span.
+    The format is an array of length-2 arrays, `[begin, end]`,
+    specifying spans,  where `begin` is inclusive and `end` is exclusive.
+    The outer array must be sorted in ascending order, and no spans
+    can overlap.  Changing the color of a token in a span (through
+    `src_spans`) has no effect on whether that token can be aligned
+    (which can be restricted using `src_head_inds`).
+  - `tar_spans` [array of arrays]: Same as above, for target side highlight spans.
   - `src_text_dir` [string]: Set
      [HTML text direction property](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/dir)
      for source sentence, determining whether source tokens are
@@ -115,40 +144,36 @@ fields:
      displayed left-to-right (for languages like English) or
      right-to-left (for languages like Arabic).  Possible values are
      `auto`, `ltr` and `rtl`.  Default: `auto`.
-  - `font_size` - A string to control tokens font size. Use the follwoing 
-  - `gold_alignment` - A JSON boolean "matrix" same as `alignment`. Add
-    this field for annotator training, usually only the first 5~10 sentences
-    will have this field. Itstores the gold alignment of given `src_tokens` 
-    and `tar_tokens`. 
-  - `translation_quality_scale` - A integer for the scale of translation
-    quality feedback, please set the default value to 100. Adding this 
-    attribute to `config_obj` will create a new column in the output CSV 
-    file named `additionalData`. Right now slider widget is used to collect
-    feedback from annotators, if in the future binary feedback is desired, 
-    make use of the out-of-shelf CheckBox widget left commented in 
-    `webapp/src/QualityFeedback.js`.
-  - `collect_comment` - Either `true` or `false`. This is a boolean value
-    to indicate whether to collect comment from annotators. Adding this
-    attribute to `config_obj` will create a new column in the output CSV
-    file named `additionalData`.
+  - `translation_quality_scale` [integer]:  If supplied, the value of
+    this parameter should always be set to 100.  Supplying a value will
+    cause the UI to display two slider controls for capturing the
+    quality of the translation.  The first slider asks users to rate
+    "How grammatically correct is the translation?" on a scale of
+    1-100.  The second slider asks users to rate "How well does the
+    translation capture the intended meaning?" on a scale of 1-100.
+    Adding this attribute to `config_obj` will cause the
+    `additionalData` column to be added to the output CSV file.  The
+    column contains a JSON object.  The value of the first slider will
+    be stored in the `grammaticalCorrectness` field of the object.
+    The value of the second slider will be stored in the
+    `meaningCapturing` field of the object.
 
+The repository includes several example CSV files:
 
-For example CSV files, see
-- [test_20_span_head_font.csv](test_20_config_full.csv). - An example of CSV file
- that sets `{src|tar}_spans`, `{src|tar}_head_inds`, `font_size`.
-- [test_20_retok.csv](test_20_retok.csv). - An example of CSV file that sets 
- `{src|tar}_enable_retokenize`.
-- [test_20_annotator_training.csv](test_20_annotator_training.csv). - An exmaple
- of CSV file that sets `gold_alignment` for annotator training. 
-- [test_20_scale.csv](test_20_scale.csv). - An example of CSV file that sets
- `translation_quality_scale` to collect translation feedback from annotators. 
+- [test_20_span_head_font.csv](test_20_span_head_font.csv). - An example CSV file
+  that sets `{src|tar}_spans`, `{src|tar}_head_inds`, `font_size`.
+- [test_20_retok.csv](test_20_retok.csv). - An example CSV file that sets
+  `{src|tar}_enable_retokenize`.
+- [test_20_annotator_training.csv](test_20_annotator_training.csv). - An example
+  CSV file that sets `gold_alignment` for annotator training.
+- [test_20_scale.csv](test_20_scale.csv). - An example CSV file that sets
+  `translation_quality_scale` to collect translation feedback from annotators.
 
------
 ## TASA structure 
 
 Read this part when you are going to develop new features or maintain TASA.
 
-The below figure illustrate the three components in the scenario of running 
+The below figure illustrates the three components in the scenario of running
 TASA running on Turkle: React code, HTML template, Turkle CSV.
 
 ![tasa structure](./figure/tasa_structure.jpg)
@@ -158,7 +183,7 @@ object. `window.src_tokens`, `window.tar_tokens`, `window.config_obj` will be
 properly assigned during the variable injection in the HTML template. These
 variables embedded in `window` will be the data source, and the responsibility
 of React code is data manipulation and visualization. The React code only sees
-one individual row in Turkle CSV, and render the UI accordingly.
+one individual row in Turkle CSV, and renders the UI accordingly.
 
 HTML template is composed of the variable injection part, and an empty `<div>` 
 with inline CSS & JS. When this HTML template is loaded by a browser (to be more 
@@ -171,7 +196,9 @@ apply style to these new DOM elements from inline CSS.
 Turkle CSV is the data source. The format of Turkle CSV is explained above.
 
 ## Contributors
+
 Listed in order of contribution:
+
 - [Tzu-Ray Su](https://github.com/ray1007)
 - [Elias Stengel-Eskin](https://github.com/esteng) 
 
