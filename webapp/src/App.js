@@ -236,6 +236,21 @@ class App extends Component {
       }
     }
 
+    // 9. source text direction. (Default: auto)
+    var sourceTextDirection = 'auto';
+    if (configObj.hasOwnProperty('src_text_dir')) {
+      sourceTextDirection = configObj['src_text_dir'];
+    }
+    this.setState({sourceTextDirection: sourceTextDirection});
+
+    // 10. target text direction.  (Default: auto)
+    var targetTextDirection = 'auto';
+    if (configObj.hasOwnProperty('tar_text_dir')) {
+      targetTextDirection = configObj['tar_text_dir'];
+    }
+    this.setState({targetTextDirection: targetTextDirection});
+
+
     // N. new feature. (Default: <default>.)
 
     if (createAdditionalDataInput) {
@@ -429,12 +444,14 @@ class App extends Component {
       enableRetokenize: this.state.srcEnableRetokenize,
       headInds: this.state.srcHeadInds,
       fontSize:this.state.fontSize,
+      sourceTextDirection: this.state.sourceTextDirection,
     };
     const tarConfig = {
       colors: this.state.tarColors,
       enableRetokenize: this.state.tarEnableRetokenize,
       headInds: this.state.tarHeadInds,
       fontSize:this.state.fontSize,
+      targetTextDirection: this.state.targetTextDirection,
     };
 
     const {
