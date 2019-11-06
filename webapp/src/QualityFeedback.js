@@ -70,8 +70,8 @@ const MyCheckboxes = (props) => {
 class QualityFeedback extends React.Component {
   state = {
     //translationValue: 3,
-    grammaticalCorrectness: 3,
-    meaningCapturing: 3,
+    grammaticalCorrectness: 50,
+    meaningCapturing: 50,
   };
 
   componentDidMount(){
