@@ -1,4 +1,4 @@
-# TASA - Translation And Structural Alignment (v1.1.3pre)
+# TASA - Translation And Structural Alignment (v1.1.3)
 
 TASA is a [React](https://reactjs.org) web application for translating
 and aligning sentence pairs.
@@ -201,4 +201,3 @@ Listed in order of contribution:
 
 - [Tzu-Ray Su](https://github.com/ray1007)
 - [Elias Stengel-Eskin](https://github.com/esteng) 
-
