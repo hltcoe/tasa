@@ -96,6 +96,8 @@ fields:
     column contains a JSON object.  The comment text (if non-empty) 
     will be stored in the `comment` field of the object.
     Default: `false`.
+  - `description` [string]: Optional description of current task.  If
+    provided, the description is shown to the user.  Default: `null`.
   - `font_size` [string]: Font size.  Default: `''`.
   - `gold_alignment` [boolean matrix]: Optional gold alignments.
     An array with `src_tokens.length` subarrays, where each subarray
