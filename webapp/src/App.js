@@ -3,11 +3,12 @@ import React, { Component } from 'react';
 import Button from "@material-ui/core/Button/Button";
 
 import './App.css';
-import Header from './Header'
-import SourceLangPanel from './SourceLangPanel'
-import TargetLangPanel from './TargetLangPanel'
-import CommentFeedback from './CommentFeedback'
-import QualityFeedback from './QualityFeedback'
+import Header from './Header';
+import Description from './Description';
+import SourceLangPanel from './SourceLangPanel';
+import TargetLangPanel from './TargetLangPanel';
+import CommentFeedback from './CommentFeedback';
+import QualityFeedback from './QualityFeedback';
 
 // The mock data stored in local file system.
 // This is used to develop ansd test new features without Turkle.
@@ -18,7 +19,7 @@ import mock from './mock.json';
 const version = {
   MAJOR: 1,
   MINOR: 1,
-  PATCH: 3
+  PATCH: 4
 };
 
 class App extends Component {
@@ -250,6 +251,12 @@ class App extends Component {
     }
     this.setState({targetTextDirection: targetTextDirection});
 
+    // 11. description.  (Default: null)
+    var description = null;
+    if (configObj.hasOwnProperty('description')) {
+      description = configObj['description'];
+    }
+    this.setState({description: description});
 
     // N. new feature. (Default: <default>.)
 
@@ -498,6 +505,7 @@ class App extends Component {
         <Header
           trainingBtn={trainingBtn}
           handleFontSizeChange={this.handleFontSizeChange}/>
+        <Description text={this.state.description} />
         <SourceLangPanel
           tokens={this.state.srcTokens} currentPos={this.state.srcPos}
           selections={this.state.selections}
