@@ -251,7 +251,14 @@ class App extends Component {
     }
     this.setState({targetTextDirection: targetTextDirection});
 
-    // 11. description.  (Default: null)
+    // 11. show text direction buttons  (Default: false)
+    var showTextDirectionButtons = false;
+    if (configObj.hasOwnProperty('show_text_dir_buttons')) {
+      showTextDirectionButtons = configObj['show_text_dir_buttons'];
+    }
+    this.setState({showTextDirectionButtons: showTextDirectionButtons});
+
+    // 12. description.  (Default: null)
     var description = null;
     if (configObj.hasOwnProperty('description')) {
       description = configObj['description'];
@@ -450,14 +457,16 @@ class App extends Component {
       colors: this.state.srcColors,
       enableRetokenize: this.state.srcEnableRetokenize,
       headInds: this.state.srcHeadInds,
-      fontSize:this.state.fontSize,
+      fontSize: this.state.fontSize,
+      showTextDirectionButtons: this.state.showTextDirectionButtons,
       sourceTextDirection: this.state.sourceTextDirection,
     };
     const tarConfig = {
       colors: this.state.tarColors,
       enableRetokenize: this.state.tarEnableRetokenize,
       headInds: this.state.tarHeadInds,
-      fontSize:this.state.fontSize,
+      fontSize: this.state.fontSize,
+      showTextDirectionButtons: this.state.showTextDirectionButtons,
       targetTextDirection: this.state.targetTextDirection,
     };
 

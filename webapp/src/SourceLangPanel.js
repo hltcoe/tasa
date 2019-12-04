@@ -2,6 +2,8 @@ import React from "react";
 import PropTypes from "prop-types";
 
 import Button from "@material-ui/core/Button/Button";
+import FormatAlignLeftIcon from '@material-ui/icons/FormatAlignLeft';
+import FormatAlignRightIcon from '@material-ui/icons/FormatAlignRight';
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import TextField from "@material-ui/core/TextField";
@@ -35,6 +37,7 @@ class SourceLangPanel extends React.Component {
     this.timer = null;
     this.state = {
       editMode: false,
+      sourceTextDirection: props.config.sourceTextDirection,
       tokenJoinedText: ""
     };
   }
@@ -120,6 +123,18 @@ class SourceLangPanel extends React.Component {
     } else {
       this.props.setHoverIdx(null);
     }
+  }
+
+  handleSetTextDirectionLTR = () => {
+    this.setState({
+      sourceTextDirection: 'ltr'
+    });
+  }
+
+  handleSetTextDirectionRTL = () => {
+    this.setState({
+      sourceTextDirection: 'rtl'
+    });
   }
 
   handleTokenClick = (idx) => () => {
@@ -227,8 +242,21 @@ class SourceLangPanel extends React.Component {
 
     return (
       <Paper className="panel" elevation={4}>
+        {this.props.config.showTextDirectionButtons?
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1em' }}>
+            <Button variant="outlined"
+                    onClick={this.handleSetTextDirectionLTR}>
+              <FormatAlignLeftIcon />
+            </Button>
+            <Button variant="outlined" color="default"
+                    onClick={this.handleSetTextDirectionRTL}>
+              <FormatAlignRightIcon />
+            </Button>
+          </div>:
+          null
+        }
         <Grid container spacing={2}>
-          <Grid item xs={11} dir={this.props.config.sourceTextDirection}>
+          <Grid item xs={11} dir={this.state.sourceTextDirection}>
             {tokenChips}
           </Grid>
           <Grid item xs={1}>

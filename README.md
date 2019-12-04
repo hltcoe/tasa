@@ -110,6 +110,13 @@ fields:
     will now have a red border.  When a source token is active, the
     aligned target token(s) border will turn red.
     Usually only the first 5-10 sentences will have this field.
+  - `show_text_dir_buttons` [boolean]: Whether or not buttons are
+    displayed that allow the user to dynamically change the 
+    [HTML text direction property](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/dir),
+    forcing the text direction to be left-to-right or right-to-left.
+    When aligning an LTR language to an RTL language, some annotators
+    find it helpful to be able to toggle the text direction.
+    Default: `false`.
   - `src_head_inds` [array]: Optional array of token indices. If
     present, only tokens identified in this array can be aligned with
     tokens in the target sentence.  For source tokens that can be aligned,

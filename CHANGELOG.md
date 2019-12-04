@@ -7,6 +7,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 ### Added
 - Added optional `description` field to the configuration object.
+- Added optional `show_text_dir_buttons` field to the configuration
+  object.
 
 ### Changed
 ### Deprecated
