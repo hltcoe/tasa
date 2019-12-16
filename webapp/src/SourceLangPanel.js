@@ -66,28 +66,46 @@ class SourceLangPanel extends React.Component {
       window.removeEventListener("keyup", this.keyHandling);
   }
 
+  decrementPos = () => {
+    let newPos = this.props.currentPos - 1;
+    while (newPos >= 0 && this.props.headInds.size > 0 && !this.props.headInds.has(newPos)){
+      newPos -= 1;
+    }
+    this.props.moveSrcPos(newPos);
+  }
+
+  incrementPos = () => {
+    let newPos = this.props.currentPos + 1;
+    while (newPos < this.props.tokens.length && this.props.headInds.size > 0 && !this.props.headInds.has(newPos)){
+      newPos += 1;
+    }
+    this.props.moveSrcPos(newPos);
+  }
+
   keyHandling = (e) => {
-    let newPos = -1;
     // Handle event
     switch(e.code){
-      case "KeyA":
-      case "ArrowLeft":
-        newPos = this.props.currentPos - 1;
-        while (newPos >= 0 && this.props.headInds.size > 0 && !this.props.headInds.has(newPos)){
-          newPos -= 1;
-        }
-        this.props.moveSrcPos(newPos);
-        break;
+    case "KeyA":
+    case "ArrowLeft":
+      if (this.state.sourceTextDirection === 'rtl') {
+        this.incrementPos();
+      }
+      else {
+        this.decrementPos();
+      }
+      break;
 
-      case "KeyD":
-      case "ArrowRight":
-        newPos = this.props.currentPos + 1;
-        while (newPos < this.props.tokens.length && this.props.headInds.size > 0 && !this.props.headInds.has(newPos)){
-          newPos += 1;
-        }
-        this.props.moveSrcPos(newPos);
-        break;
-      default:
+    case "KeyD":
+    case "ArrowRight":
+      if (this.state.sourceTextDirection === 'rtl') {
+        this.decrementPos();
+      }
+      else {
+        this.incrementPos();
+      }
+      break;
+
+    default:
     }
   };
 
