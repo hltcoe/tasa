@@ -88,7 +88,7 @@ class Header extends PureComponent {
           <Typography className='dialogText'>
             Before starting, please read the annotation guidelines
             <a
-              href="https://esteng.github.io/annotation/guidelines_for_mturk"
+              href="https://esteng.github.io/misc/annotation/guidelines_for_mturk.html"
               target="_blank" rel="noopener noreferrer"
             >here</a> <br />
             Use key A/D or left/right to move along source sentence. <br/>
