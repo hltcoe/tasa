@@ -89,6 +89,7 @@ class App extends Component {
       const {src_tokens, tar_tokens, config_obj} = mock;
       this.initializeStates(src_tokens, tar_tokens, config_obj);
     }
+    document.addEventListener("keyup", this.handleKeyPress);
   }
 
   initializeStates(src_tokens, tar_tokens, configObj) {
@@ -330,6 +331,11 @@ class App extends Component {
     }
   }
 
+  handleKeyPress = (event) => {
+    if (event.key === "Enter") {
+        this.handleSubmit()
+    }
+  }
   handleSubmit = () => {
     console.log("handling submission");
     console.log(this.state.additionalData);
@@ -494,7 +500,7 @@ class App extends Component {
     }
 
     return (
-      <div>
+      <div> 
         <Header
           trainingBtn={trainingBtn}
           handleFontSizeChange={this.handleFontSizeChange}/>
@@ -532,9 +538,7 @@ class App extends Component {
         {/* feedback UI */}
         {qualityFeedback}
         {commentFeedback}
-
-        <input className="submit" onClick={this.handleSubmit}
-               type="submit" value="Submit" />
+        <input className="submit" onClick={this.handleSubmit} type="submit" value="Submit" />
       </div>
     );
   }
