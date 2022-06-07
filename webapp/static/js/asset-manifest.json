@@ -1,0 +1,14 @@
+{
+  "files": {
+    "main.css": "/static/css/main.2cc53588.css",
+    "main.js": "/tasa.js",
+    "main.js.map": "/tasa.js.map",
+    "index.html": "/index.html",
+    "static/css/main.2cc53588.css.map": "/static/css/main.2cc53588.css.map",
+    "tasa.js.LICENSE.txt": "/tasa.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/css/main.2cc53588.css",
+    "tasa.js"
+  ]
+}
