@@ -350,11 +350,11 @@ class App extends Component {
 
     var n = document.querySelector("#srcTokensInput");
     if (n) {
-      n.value = JSON.stringify(this.state.src_tokens);
+      n.value = JSON.stringify(this.state.srcTokens);
     }
     n = document.querySelector("#tarTokensInput");
     if (n) {
-      n.value = JSON.stringify(this.state.tar_tokens);
+      n.value = JSON.stringify(this.state.tarTokens);
     }
     n = document.querySelector("#alignmentInput");
     if (n) {

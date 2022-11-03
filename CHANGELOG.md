@@ -14,6 +14,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Deprecated
 ### Removed
 ### Fixed
+- Current tokenization now saved to HTML form variables `src_tokens`
+  and `tar_tokens`.
 ### Security
 - Fixed several security issues identified by 'npm audit' by updating
   all NPM dependencies to latest available versions as of 2019-11-11. 
