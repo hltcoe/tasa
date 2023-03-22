@@ -307,10 +307,35 @@ class App extends Component {
   }
 
   handleChangeSrcTokens = (newTokens) => {
-    // update app states
-    var selections = newTokens.map((token) =>
-      this.state.tarTokens.map((token) => false)
-    );
+    // If we delete source tokens, we need to make
+    // sure srcPos remains in bounds. In these cases,
+    // we move srcPos to the last token.
+    if (this.state.srcPos >= newTokens.length) {
+      this.setState({
+        srcPos: newTokens.length - 1,
+      })
+    }
+
+    // Identify first token that has changed.
+    var prevNumSrcTokens = this.state.srcTokens.length;
+    var n = 0;
+    while (n < prevNumSrcTokens && n < newTokens.length) {
+      if (this.state.srcTokens[n] !== newTokens[n]) {
+        break;
+      }
+      n += 1;
+    }
+
+    // Preserve existing alignments where possible.
+    // In practice, if we change the nth token in the
+    // source, we clear all alignments for tokens > n.
+    var selections = newTokens.map((token, index) => {
+      if (index < n) {
+        return this.state.selections[index]
+      } else {
+        return this.state.tarTokens.map((token) => false)
+      }
+    });
     this.setState({
       srcTokens: newTokens,
       selections: selections
@@ -318,8 +343,27 @@ class App extends Component {
   }
 
   handleChangeTarTokens = (newTokens) => {
-    var selections = this.state.srcTokens.map((token) =>
-      newTokens.map((token) => false)
+    // Identify first token that has changed.
+    var prevNumTarTokens = this.state.tarTokens.length;
+    var n = 0;
+    while (n < prevNumTarTokens && n < newTokens.length) {
+      if (this.state.tarTokens[n] !== newTokens[n]) {
+        break;
+      }
+      n += 1;
+    }
+    // As in handleChangeSrcTokens, we try to preserve
+    // the existing alignment where possible. Here,
+    // if we change the nth token in the *target*, we
+    // clear all alignments to tokens > n
+    var selections = this.state.srcTokens.map((token, i) =>
+      newTokens.map((token, j) => {
+        if (j < n) {
+          return this.state.selections[i][j]
+        } else {
+          return false
+        }
+      })
     );
     this.setState({
       tarTokens: newTokens,
