@@ -63,7 +63,7 @@ class App extends Component {
     };
   }
 
-  componentDidMount() {}
+  componentDidMount() { }
 
   componentWillMount() {
     // These input fields are required for Turkle to collect
@@ -87,7 +87,7 @@ class App extends Component {
       this.initializeStates(window.src_tokens, window.tar_tokens, window.config_obj);
     } else {
       // this code is executeed independently, not inside Turkle.
-      const {src_tokens, tar_tokens, config_obj} = mock;
+      const { src_tokens, tar_tokens, config_obj } = mock;
       this.initializeStates(src_tokens, tar_tokens, config_obj);
     }
   }
@@ -95,11 +95,11 @@ class App extends Component {
   initializeStates(src_tokens, tar_tokens, configObj) {
     // target language
     const tarIsBlurry = tar_tokens.map((token) => false);
-    this.setState({tarTokens: tar_tokens, tarIsBlurry: tarIsBlurry});
+    this.setState({ tarTokens: tar_tokens, tarIsBlurry: tarIsBlurry });
 
     // source language
     const srcIsBlurry = src_tokens.map((token) => false);
-    this.setState({srcTokens: src_tokens, srcIsBlurry: srcIsBlurry});
+    this.setState({ srcTokens: src_tokens, srcIsBlurry: srcIsBlurry });
 
     // Deserialized JSON string of config_obj.
     // Configurations will have default values unless specified in `configObj`.
@@ -107,15 +107,19 @@ class App extends Component {
     // compare version number to ensure compatibility.
     if (!configObj.hasOwnProperty('version')) {
       var msg = '`configObj` has no key `version`. This CSV file is too old.'
-      this.setState({srcTokens: msg.split(" "),
-                     tarTokens: []});
+      this.setState({
+        srcTokens: msg.split(" "),
+        tarTokens: []
+      });
       console.log(msg)
       configObj = {};
       return;
     } else if (version.MAJOR !== configObj.version.MAJOR) {
       msg = `Incompatible CSV file. React code major version (${version.MAJOR}) !== \`configObj\` major version (${configObj.version.MAJOR}).`
-      this.setState({srcTokens: msg.split(" "),
-                     tarTokens: []});
+      this.setState({
+        srcTokens: msg.split(" "),
+        tarTokens: []
+      });
       console.log(msg)
       configObj = {};
       return;
@@ -128,7 +132,7 @@ class App extends Component {
     if (configObj.hasOwnProperty('alignment')) {
       selections = configObj['alignment'];
     }
-    this.setState({selections: selections,});
+    this.setState({ selections: selections, });
 
     // 2. re-tokenization control. (Default: true)
     if (configObj.hasOwnProperty('src_enable_retokenize'))
@@ -176,10 +180,10 @@ class App extends Component {
         hue = (hue + hueIncr) % 360;
       }
     }
-    this.setState({srcColors: srcColors, tarColors: tarColors});
+    this.setState({ srcColors: srcColors, tarColors: tarColors });
 
     // 4. bolded head inds. (Default: no bolded text.)
-    if (configObj.hasOwnProperty('src_head_inds')){
+    if (configObj.hasOwnProperty('src_head_inds')) {
       // move `srcPos` to the first head idx.
       var srcPos = 0;
       const headInds = new Set(configObj['src_head_inds']);
@@ -242,28 +246,28 @@ class App extends Component {
     if (configObj.hasOwnProperty('src_text_dir')) {
       sourceTextDirection = configObj['src_text_dir'];
     }
-    this.setState({sourceTextDirection: sourceTextDirection});
+    this.setState({ sourceTextDirection: sourceTextDirection });
 
     // 10. target text direction.  (Default: auto)
     var targetTextDirection = 'auto';
     if (configObj.hasOwnProperty('tar_text_dir')) {
       targetTextDirection = configObj['tar_text_dir'];
     }
-    this.setState({targetTextDirection: targetTextDirection});
+    this.setState({ targetTextDirection: targetTextDirection });
 
     // 11. show text direction buttons  (Default: false)
     var showTextDirectionButtons = false;
     if (configObj.hasOwnProperty('show_text_dir_buttons')) {
       showTextDirectionButtons = configObj['show_text_dir_buttons'];
     }
-    this.setState({showTextDirectionButtons: showTextDirectionButtons});
+    this.setState({ showTextDirectionButtons: showTextDirectionButtons });
 
     // 12. description.  (Default: null)
     var description = null;
     if (configObj.hasOwnProperty('description')) {
       description = configObj['description'];
     }
-    this.setState({description: description});
+    this.setState({ description: description });
 
     // N. new feature. (Default: <default>.)
 
@@ -287,7 +291,7 @@ class App extends Component {
   // class methods as event listeners
 
   handleSrcPosChange = (newPos) => {
-    if (0 <= newPos && newPos < this.state.srcTokens.length){
+    if (0 <= newPos && newPos < this.state.srcTokens.length) {
       this.setState({
         srcPos: newPos,
       })
@@ -326,12 +330,19 @@ class App extends Component {
       n += 1;
     }
 
+    var netChangeInNumTokens = newTokens.length - prevNumSrcTokens;
     // Preserve existing alignments where possible.
     // In practice, if we change the nth token in the
-    // source, we clear all alignments for tokens > n.
+    // source, we preserve all alignments from source
+    // tokens at positions < n. We also preserve alignments
+    // in the following two cases:
+    // 1. the total number of tokens is unchanged
+    // 2. tokens are inserted at the end
     var selections = newTokens.map((token, index) => {
-      if (index < n) {
+      if (index < n || netChangeInNumTokens === 0) {
         return this.state.selections[index]
+      } else if (netChangeInNumTokens < 0) {
+        return this.state.selections[index - netChangeInNumTokens]
       } else {
         return this.state.tarTokens.map((token) => false)
       }
@@ -352,14 +363,16 @@ class App extends Component {
       }
       n += 1;
     }
+    var netChangeInNumTokens = newTokens.length - prevNumTarTokens;
     // As in handleChangeSrcTokens, we try to preserve
-    // the existing alignment where possible. Here,
-    // if we change the nth token in the *target*, we
-    // clear all alignments to tokens > n
+    // the existing alignment where possible, using the
+    // same basic strategy --- just with the target tokens.
     var selections = this.state.srcTokens.map((token, i) =>
       newTokens.map((token, j) => {
-        if (j < n) {
+        if (j < n || netChangeInNumTokens === 0) {
           return this.state.selections[i][j]
+        } else if (netChangeInNumTokens < 0) {
+          return this.state.selections[i][j - netChangeInNumTokens]
         } else {
           return false
         }
@@ -375,16 +388,16 @@ class App extends Component {
     // first save current data to backend, then query new data.
     let dataIdx = this.state.dataIdx;
     if (dataIdx > 1) {
-      this.setState({dataIdx: dataIdx-1});
-      this.fetchCommunicationAndUpdateState(dataIdx-1)
+      this.setState({ dataIdx: dataIdx - 1 });
+      this.fetchCommunicationAndUpdateState(dataIdx - 1)
     }
   }
 
   handleNextData = () => {
     let dataIdx = this.state.dataIdx;
     if (dataIdx < this.state.totalData) {
-      this.setState({dataIdx: dataIdx+1});
-      this.fetchCommunicationAndUpdateState(dataIdx+1)
+      this.setState({ dataIdx: dataIdx + 1 });
+      this.fetchCommunicationAndUpdateState(dataIdx + 1)
     }
   }
 
@@ -411,7 +424,7 @@ class App extends Component {
   }
 
   handleFontSizeChange = (sizeStr) => {
-    this.setState({fontSize: sizeStr});
+    this.setState({ fontSize: sizeStr });
     console.log(sizeStr);
   }
 
@@ -423,7 +436,7 @@ class App extends Component {
       // reset blurriness.
       const srcIsBlurry = this.state.srcTokens.map((token) => false);
       const tarIsBlurry = this.state.tarTokens.map((token) => false);
-      this.setState({srcIsBlurry: srcIsBlurry, tarIsBlurry: tarIsBlurry});
+      this.setState({ srcIsBlurry: srcIsBlurry, tarIsBlurry: tarIsBlurry });
       return;
     }
 
@@ -443,7 +456,7 @@ class App extends Component {
       if (!this.state.selections[idx][i])
         tarIsBlurry[i] = true;
 
-    this.setState({srcIsBlurry: srcIsBlurry, tarIsBlurry: tarIsBlurry});
+    this.setState({ srcIsBlurry: srcIsBlurry, tarIsBlurry: tarIsBlurry });
     //console.log("set blurriness", srcIsBlurry, tarIsBlurry);
   }
 
@@ -454,13 +467,13 @@ class App extends Component {
       // reset blurriness.
       const srcIsBlurry = this.state.srcTokens.map((token) => false);
       const tarIsBlurry = this.state.tarTokens.map((token) => false);
-      this.setState({srcIsBlurry: srcIsBlurry, tarIsBlurry: tarIsBlurry});
+      this.setState({ srcIsBlurry: srcIsBlurry, tarIsBlurry: tarIsBlurry });
       return;
     }
 
     var touched = false;
     for (var i = 0; i < this.state.selections.length; i++)
-      if (this.state.selections[i][idx]){
+      if (this.state.selections[i][idx]) {
         touched = true;
         break;
       }
@@ -479,12 +492,12 @@ class App extends Component {
       if (!this.state.selections[i][idx])
         srcIsBlurry[i] = true;
 
-    this.setState({srcIsBlurry: srcIsBlurry, tarIsBlurry: tarIsBlurry});
+    this.setState({ srcIsBlurry: srcIsBlurry, tarIsBlurry: tarIsBlurry });
     console.log("set blurriness", srcIsBlurry, tarIsBlurry);
   }
 
   showTrainingFeedack = () => {
-    this.setState({showFeedback: true});
+    this.setState({ showFeedback: true });
   };
 
   modifyAdditionalData = (key, value) => {
@@ -492,7 +505,7 @@ class App extends Component {
     if (d === null)
       d = {};
     d[key] = value;
-    this.setState({additionalData: d});
+    this.setState({ additionalData: d });
     console.log(`${key} is set to ${value}`);
   };
 
@@ -537,7 +550,7 @@ class App extends Component {
     }
 
     var qualityFeedback = null;
-    if (collectTranslationQuality){
+    if (collectTranslationQuality) {
       qualityFeedback = <QualityFeedback
         qualityScale={translationQualityScale}
         modifyAdditionalData={this.modifyAdditionalData}
@@ -545,10 +558,10 @@ class App extends Component {
     }
 
     var commentFeedback = null;
-    if (collectComment){
+    if (collectComment) {
       commentFeedback = <CommentFeedback
-        onFocusIn={() => this.setState({alignerhasFocus: false})}
-        onFocusOut={() => this.setState({alignerhasFocus: true})}
+        onFocusIn={() => this.setState({ alignerhasFocus: false })}
+        onFocusOut={() => this.setState({ alignerhasFocus: true })}
         modifyAdditionalData={this.modifyAdditionalData}
       />;
     }
@@ -557,7 +570,7 @@ class App extends Component {
       <div>
         <Header
           trainingBtn={trainingBtn}
-          handleFontSizeChange={this.handleFontSizeChange}/>
+          handleFontSizeChange={this.handleFontSizeChange} />
         <Description text={this.state.description} />
         <SourceLangPanel
           tokens={this.state.srcTokens} currentPos={this.state.srcPos}
@@ -595,7 +608,7 @@ class App extends Component {
         {commentFeedback}
 
         <input className="submit" onClick={this.handleSubmit}
-               type="submit" value="Submit" />
+          type="submit" value="Submit" />
       </div>
     );
   }
