@@ -359,48 +359,63 @@ class App extends Component {
   }
 
   handleChangeTarTokens = (newTokens) => {
-    // Identify first token that has changed.
-    var prevNumTarTokens = this.state.tarTokens.length;
-    var n = 0;
-    while (n < prevNumTarTokens && n < newTokens.length) {
-      if (this.state.tarTokens[n] !== newTokens[n]) {
-        break;
+    var oldTokens = this.state.tarTokens;
+    var matrix = newTokens.map((token) => 
+      oldTokens.map((token) => 0)
+    );
+    // compute the longest common subsequence
+    // between original and new target tokens
+    for (var i = 0; i < newTokens.length; i++) {
+      for (var j = 0; j < oldTokens.length; j++) {
+        if (i === 0 || j === 0) {
+          if (newTokens[i] === oldTokens[j]) {
+            matrix[i][j] = 1;
+          } else {
+            matrix[i][j] = 0;
+          }
+        } else if (newTokens[i] === oldTokens[j]) {
+          matrix[i][j] = matrix[i-1][j-1] + 1;
+        } else {
+          matrix[i][j] = Math.max(matrix[i-1][j], matrix[i][j-1]);
+        }
       }
-      n += 1;
     }
-    var deltaNumTokens = newTokens.length - prevNumTarTokens;
-    // As in handleChangeSrcTokens, we try to preserve
-    // the existing alignment where possible, using the
-    // same basic strategy --- just with the target tokens.
+
+    // mapping from new tokens to old tokens
+    var newToOld = newTokens.map((token) => -1);
+
+    // backtrack to map new tokens to old tokens
+    var i = newTokens.length - 1;
+    var j = oldTokens.length - 1;
+    while (i >= 0 && j >= 0) {
+      if (newTokens[i] === oldTokens[j]) {
+        newToOld[i] = j;
+        i -= 1;
+        j -= 1;
+      } else if (matrix[i-1][j] > matrix[i][j-1]) {
+        i -= 1;
+      } else {
+        j -= 1;
+      }
+    }
+
+    // recompute selections (alignments) from source
+    // to target based on mapping between old target
+    // tokens and new target tokens
     var selections = this.state.srcTokens.map((token, i) =>
       newTokens.map((token, j) => {
-        if (j < n || deltaNumTokens === 0) {
-          return this.state.selections[i][j]
-        } else if (deltaNumTokens < 0) {
-          return this.state.selections[i][j - deltaNumTokens]
+        if (newToOld[j] === -1) {
+          return false;
         } else {
-          return false
+          return this.state.selections[i][newToOld[j]];
         }
       })
     );
 
-    // Tracks target tokens whose alignments may
-    // have changed due to retokenization.
-    var autoAlignedTokens = newTokens.map((token, i) => {
-      if (i < n) {
-        return false
-      } else if (deltaNumTokens === 0) {
-        return false
-      } else if (deltaNumTokens < 0) {
-        return true
-      } else {
-        return false
-      }
-    });
     this.setState({
       tarTokens: newTokens,
       selections: selections,
-      tarAutoAlignedTokens: autoAlignedTokens
+      // tarAutoAlignedTokens: autoAlignedTokens
     })
   }
 
