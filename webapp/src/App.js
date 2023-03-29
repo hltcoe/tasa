@@ -28,7 +28,9 @@ class App extends Component {
 
     this.state = {
       srcTokens: [],
+      srcAutoAlignedTokens: [],
       tarTokens: [],
+      tarAutoAlignedTokens: [],
       selections: [[]], // List<List<bool>>
       srcPos: 0,
       currentSelection: [],
@@ -301,12 +303,15 @@ class App extends Component {
   handleToggleSelectionAt = (idx) => {
     let selections = this.state.selections;
     let selection = selections[this.state.srcPos];
+    let autoAlignedTarTokens = this.state.tarAutoAlignedTokens;
 
     selection[idx] = (selection[idx] !== true);
     selections[this.state.srcPos] = selection;
+    autoAlignedTarTokens[idx] = false;
 
     this.setState({
       selections: selections,
+      autoAlignedTarTokens: autoAlignedTarTokens
     })
   }
 
@@ -330,7 +335,7 @@ class App extends Component {
       n += 1;
     }
 
-    var netChangeInNumTokens = newTokens.length - prevNumSrcTokens;
+    var deltaNumTokens = newTokens.length - prevNumSrcTokens;
     // Preserve existing alignments where possible.
     // In practice, if we change the nth token in the
     // source, we preserve all alignments from source
@@ -339,10 +344,10 @@ class App extends Component {
     // 1. the total number of tokens is unchanged
     // 2. tokens are inserted at the end
     var selections = newTokens.map((token, index) => {
-      if (index < n || netChangeInNumTokens === 0) {
+      if (index < n || deltaNumTokens === 0) {
         return this.state.selections[index]
-      } else if (netChangeInNumTokens < 0) {
-        return this.state.selections[index - netChangeInNumTokens]
+      } else if (deltaNumTokens < 0) {
+        return this.state.selections[index - deltaNumTokens]
       } else {
         return this.state.tarTokens.map((token) => false)
       }
@@ -363,24 +368,39 @@ class App extends Component {
       }
       n += 1;
     }
-    var netChangeInNumTokens = newTokens.length - prevNumTarTokens;
+    var deltaNumTokens = newTokens.length - prevNumTarTokens;
     // As in handleChangeSrcTokens, we try to preserve
     // the existing alignment where possible, using the
     // same basic strategy --- just with the target tokens.
     var selections = this.state.srcTokens.map((token, i) =>
       newTokens.map((token, j) => {
-        if (j < n || netChangeInNumTokens === 0) {
+        if (j < n || deltaNumTokens === 0) {
           return this.state.selections[i][j]
-        } else if (netChangeInNumTokens < 0) {
-          return this.state.selections[i][j - netChangeInNumTokens]
+        } else if (deltaNumTokens < 0) {
+          return this.state.selections[i][j - deltaNumTokens]
         } else {
           return false
         }
       })
     );
+
+    // Tracks target tokens whose alignments may
+    // have changed due to retokenization.
+    var autoAlignedTokens = newTokens.map((token, i) => {
+      if (i < n) {
+        return false
+      } else if (deltaNumTokens === 0) {
+        return false
+      } else if (deltaNumTokens < 0) {
+        return true
+      } else {
+        return false
+      }
+    });
     this.setState({
       tarTokens: newTokens,
-      selections: selections
+      selections: selections,
+      tarAutoAlignedTokens: autoAlignedTokens
     })
   }
 
@@ -573,8 +593,10 @@ class App extends Component {
           handleFontSizeChange={this.handleFontSizeChange} />
         <Description text={this.state.description} />
         <SourceLangPanel
-          tokens={this.state.srcTokens} currentPos={this.state.srcPos}
+          tokens={this.state.srcTokens}
+          currentPos={this.state.srcPos}
           selections={this.state.selections}
+          autoAlignedTokens={this.state.tarAutoAlignedTokens}
           isBlurry={this.state.srcIsBlurry}
           config={srcConfig}
           goldAlignment={this.state.goldAlignment}
@@ -589,8 +611,10 @@ class App extends Component {
           hasFocus={this.state.alignerhasFocus}
         />
         <TargetLangPanel
-          tokens={this.state.tarTokens} currentPos={this.state.srcPos}
+          tokens={this.state.tarTokens}
+          currentPos={this.state.srcPos}
           selections={this.state.selections}
+          autoAlignedTokens={this.state.tarAutoAlignedTokens}
           isBlurry={this.state.tarIsBlurry}
           config={tarConfig}
           goldAlignment={this.state.goldAlignment}

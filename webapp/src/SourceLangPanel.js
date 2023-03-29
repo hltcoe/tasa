@@ -22,6 +22,9 @@ const styles = {
     color: '#fff',
     backgroundColor: '#3f51b5',
   },
+  autoAlignedToken: {
+    border: '3px solid #cc5500'
+  },
   blurryToken: { filter: 'blur(5px)' },
   boldedToken: { fontWeight: 'bold' },
   correctToken: { border: '3px solid #0f0' },
@@ -173,8 +176,8 @@ class SourceLangPanel extends React.Component {
     //const config = this.props.config;
     //const tokens = this.props.tokens;
     const {classes, tokens, isBlurry, selections,
-           currentPos, colors, headInds,
-           goldAlignment, showFeedback} = this.props;
+           autoAlignedTokens, currentPos, colors,
+           headInds, goldAlignment, showFeedback} = this.props;
 
     var tokenChips = [];
     for (var idx = 0; idx < tokens.length; idx++){
@@ -209,8 +212,14 @@ class SourceLangPanel extends React.Component {
 
       // if tokens[idx] is touched.
       const touched = selections[idx].some(b => b)
-      if (touched && !showFeedback)
-        className += ` ${classes.touchedToken}`;
+      const autoAligned = selections[idx].some((s,i) => s && autoAlignedTokens[i])
+      if (touched && !showFeedback) {
+        if (autoAligned) {
+          className += ` ${classes.autoAlignedToken}`;
+        } else {
+          className += ` ${classes.touchedToken}`;
+        }
+      }
 
       // if tokens[idx] is active (currently selected)
       if (idx === currentPos) {
