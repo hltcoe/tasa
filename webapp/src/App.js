@@ -28,9 +28,7 @@ class App extends Component {
 
     this.state = {
       srcTokens: [],
-      srcAutoAlignedTokens: [],
       tarTokens: [],
-      tarAutoAlignedTokens: [],
       selections: [[]], // List<List<bool>>
       srcPos: 0,
       currentSelection: [],
@@ -303,68 +301,23 @@ class App extends Component {
   handleToggleSelectionAt = (idx) => {
     let selections = this.state.selections;
     let selection = selections[this.state.srcPos];
-    let autoAlignedTarTokens = this.state.tarAutoAlignedTokens;
 
     selection[idx] = (selection[idx] !== true);
     selections[this.state.srcPos] = selection;
-    autoAlignedTarTokens[idx] = false;
 
     this.setState({
       selections: selections,
-      autoAlignedTarTokens: autoAlignedTarTokens
     })
   }
 
   handleChangeSrcTokens = (newTokens) => {
-    // If we delete source tokens, we need to make
-    // sure srcPos remains in bounds. In these cases,
-    // we move srcPos to the last token.
-    if (this.state.srcPos >= newTokens.length) {
-      this.setState({
-        srcPos: newTokens.length - 1,
-      })
-    }
-
-    // Identify first token that has changed.
-    var prevNumSrcTokens = this.state.srcTokens.length;
-    var n = 0;
-    while (n < prevNumSrcTokens && n < newTokens.length) {
-      if (this.state.srcTokens[n] !== newTokens[n]) {
-        break;
-      }
-      n += 1;
-    }
-
-    var deltaNumTokens = newTokens.length - prevNumSrcTokens;
-    // Preserve existing alignments where possible.
-    // In practice, if we change the nth token in the
-    // source, we preserve all alignments from source
-    // tokens at positions < n. We also preserve alignments
-    // in the following two cases:
-    // 1. the total number of tokens is unchanged
-    // 2. tokens are inserted at the end
-    var selections = newTokens.map((token, index) => {
-      if (index < n || deltaNumTokens === 0) {
-        return this.state.selections[index]
-      } else if (deltaNumTokens < 0) {
-        return this.state.selections[index - deltaNumTokens]
-      } else {
-        return this.state.tarTokens.map((token) => false)
-      }
-    });
-    this.setState({
-      srcTokens: newTokens,
-      selections: selections
-    })
-  }
-
-  handleChangeTarTokens = (newTokens) => {
-    var oldTokens = this.state.tarTokens;
-    var matrix = newTokens.map((token) => 
+    var oldTokens = this.state.srcTokens;
+    var matrix = newTokens.map((token) =>
       oldTokens.map((token) => 0)
     );
-    // compute the longest common subsequence
-    // between original and new target tokens
+
+    // compute the longest common subsequence (LCS)
+    // between original and new source tokens
     for (var i = 0; i < newTokens.length; i++) {
       for (var j = 0; j < oldTokens.length; j++) {
         if (i === 0 || j === 0) {
@@ -374,9 +327,9 @@ class App extends Component {
             matrix[i][j] = 0;
           }
         } else if (newTokens[i] === oldTokens[j]) {
-          matrix[i][j] = matrix[i-1][j-1] + 1;
+          matrix[i][j] = matrix[i - 1][j - 1] + 1;
         } else {
-          matrix[i][j] = Math.max(matrix[i-1][j], matrix[i][j-1]);
+          matrix[i][j] = Math.max(matrix[i - 1][j], matrix[i][j - 1]);
         }
       }
     }
@@ -384,15 +337,21 @@ class App extends Component {
     // mapping from new tokens to old tokens
     var newToOld = newTokens.map((token) => -1);
 
-    // backtrack to map new tokens to old tokens
-    var i = newTokens.length - 1;
-    var j = oldTokens.length - 1;
+    // backtrack through LCS matrix to map
+    // new source tokens to old source tokens
+    i = newTokens.length - 1;
+    j = oldTokens.length - 1;
+    var srcPos = newTokens.length - 1;
     while (i >= 0 && j >= 0) {
       if (newTokens[i] === oldTokens[j]) {
+        // update srcPos too
+        if (j === this.state.srcPos) {
+          srcPos = i;
+        }
         newToOld[i] = j;
         i -= 1;
         j -= 1;
-      } else if (matrix[i-1][j] > matrix[i][j-1]) {
+      } else if (i > 0 && j > 0 && matrix[i - 1][j] > matrix[i][j - 1]) {
         i -= 1;
       } else {
         j -= 1;
@@ -401,7 +360,68 @@ class App extends Component {
 
     // recompute selections (alignments) from source
     // to target based on mapping between old target
-    // tokens and new target tokens
+    // tokens and new target tokens. If there was
+    // originally an alignemtn from (old) source token s
+    // to target token t, and if *new* source token u
+    // maps to s in the LCS, then u will be aligned to
+    // t in the new selections.
+    var selections = newTokens.map((token, i) => {
+      if (newToOld[i] === -1) {
+        return this.state.tarTokens.map((token) => false);
+      } else {
+        return this.state.selections[newToOld[i]];
+      }
+    })
+
+    this.setState({
+      srcPos: srcPos,
+      srcTokens: newTokens,
+      selections: selections
+    })
+  }
+
+  handleChangeTarTokens = (newTokens) => {
+    // We take the same longest common subsequence
+    // approach to recomputing alignments here as in
+    // handleChangeSrcTokens
+
+    var oldTokens = this.state.tarTokens;
+    var matrix = newTokens.map((token) =>
+      oldTokens.map((token) => 0)
+    );
+
+    for (var i = 0; i < newTokens.length; i++) {
+      for (var j = 0; j < oldTokens.length; j++) {
+        if (i === 0 || j === 0) {
+          if (newTokens[i] === oldTokens[j]) {
+            matrix[i][j] = 1;
+          } else {
+            matrix[i][j] = 0;
+          }
+        } else if (newTokens[i] === oldTokens[j]) {
+          matrix[i][j] = matrix[i - 1][j - 1] + 1;
+        } else {
+          matrix[i][j] = Math.max(matrix[i - 1][j], matrix[i][j - 1]);
+        }
+      }
+    }
+
+    var newToOld = newTokens.map((token) => -1);
+
+    i = newTokens.length - 1;
+    j = oldTokens.length - 1;
+    while (i >= 0 && j >= 0) {
+      if (newTokens[i] === oldTokens[j]) {
+        newToOld[i] = j;
+        i -= 1;
+        j -= 1;
+      } else if (i > 0 && j > 0 && matrix[i - 1][j] > matrix[i][j - 1]) {
+        i -= 1;
+      } else {
+        j -= 1;
+      }
+    }
+
     var selections = this.state.srcTokens.map((token, i) =>
       newTokens.map((token, j) => {
         if (newToOld[j] === -1) {
@@ -415,7 +435,6 @@ class App extends Component {
     this.setState({
       tarTokens: newTokens,
       selections: selections,
-      // tarAutoAlignedTokens: autoAlignedTokens
     })
   }
 
@@ -611,7 +630,6 @@ class App extends Component {
           tokens={this.state.srcTokens}
           currentPos={this.state.srcPos}
           selections={this.state.selections}
-          autoAlignedTokens={this.state.tarAutoAlignedTokens}
           isBlurry={this.state.srcIsBlurry}
           config={srcConfig}
           goldAlignment={this.state.goldAlignment}
@@ -629,7 +647,6 @@ class App extends Component {
           tokens={this.state.tarTokens}
           currentPos={this.state.srcPos}
           selections={this.state.selections}
-          autoAlignedTokens={this.state.tarAutoAlignedTokens}
           isBlurry={this.state.tarIsBlurry}
           config={tarConfig}
           goldAlignment={this.state.goldAlignment}

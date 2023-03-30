@@ -22,10 +22,6 @@ const styles = {
     color: '#fff',
     backgroundColor: '#3f51b5',
   },
-  autoAlignedToken: {
-    color: '#fff',
-    backgroundColor: '#cc5500'
-  },
   blurryToken: { filter: 'blur(5px)' },
   boldedToken: { fontWeight: 'bold' },
   correctToken: { border: '3px solid #0f0' },
@@ -109,8 +105,7 @@ class TargetLangPanel extends React.Component {
   renderNormalMode() {
     const config = this.props.config;
     //const tokens = this.props.tokens;
-    const { classes, tokens, selections,
-      autoAlignedTokens, currentPos,
+    const { classes, tokens, selections, currentPos,
       isBlurry, goldAlignment, showFeedback } = this.props;
     const selection = selections[currentPos];
 
@@ -153,8 +148,6 @@ class TargetLangPanel extends React.Component {
         }
       if (touched)
         className += ` ${classes.touchedToken}`;
-      if (autoAlignedTokens[idx])
-        className += ` ${classes.autoAlignedToken}`;
 
       // if tokens[idx] is active (currently selected)
       if (selection[idx]) {
