@@ -80,6 +80,7 @@ class Header extends PureComponent {
             <Button color="inherit" onClick={this.handleDialogOpen}>
               Show Instructions
             </Button>
+            {this.props.taskID != null && (<Typography color="inherit"> | TASK ID: {this.props.taskID} </Typography>)}
           </Toolbar>
         </AppBar>
 

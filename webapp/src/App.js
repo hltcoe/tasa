@@ -60,6 +60,9 @@ class App extends Component {
       translationQualityScale: 100,
       additionalData: null,
       collectComment: false,
+
+      // task ID
+      taskID: null
     };
   }
 
@@ -125,7 +128,7 @@ class App extends Component {
       return;
     }
 
-    // 1. initial alignemnt. (Default: every entry in `selections` is false)
+    // 1. initial alignment. (Default: every entry in `selections` is false)
     var selections = src_tokens.map((token) =>
       tar_tokens.map((token) => false)
     );
@@ -269,8 +272,14 @@ class App extends Component {
     }
     this.setState({ description: description });
 
-    // N. new feature. (Default: <default>.)
+    // 13. task ID. (Default: null)
+    var taskID = null;
+    if (configObj.hasOwnProperty('task_id')) {
+      taskID = configObj['task_id'];
+    }
+    this.setState({ taskID: taskID });
 
+    // N. new feature. (Default: <default>.)
     if (createAdditionalDataInput) {
       // if this.state.additionalData won't be null,
       // then we have to create a new input field
@@ -624,7 +633,8 @@ class App extends Component {
       <div>
         <Header
           trainingBtn={trainingBtn}
-          handleFontSizeChange={this.handleFontSizeChange} />
+          handleFontSizeChange={this.handleFontSizeChange}
+          taskID={this.state.taskID} />
         <Description text={this.state.description} />
         <SourceLangPanel
           tokens={this.state.srcTokens}
