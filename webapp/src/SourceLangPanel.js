@@ -172,9 +172,9 @@ class SourceLangPanel extends React.Component {
   renderNormalMode(){
     //const config = this.props.config;
     //const tokens = this.props.tokens;
-    const {classes, tokens, isBlurry, selections,
-           currentPos, colors, headInds,
-           goldAlignment, showFeedback} = this.props;
+    const {classes, tokens, isBlurry,
+           selections, currentPos, colors,
+           headInds, goldAlignment, showFeedback} = this.props;
 
     var tokenChips = [];
     for (var idx = 0; idx < tokens.length; idx++){

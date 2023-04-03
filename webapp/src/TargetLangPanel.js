@@ -52,7 +52,7 @@ class TargetLangPanel extends React.Component {
 
   handleLeaveEditMode = () => {
     // Add Event Listener on component mount
-    this.setState({editMode: false});
+    this.setState({ editMode: false });
     let newTokens = document.getElementById("tarTokensTextField").value.split("\n");
     this.props.changeTokens(newTokens)
   };
@@ -105,27 +105,27 @@ class TargetLangPanel extends React.Component {
   renderNormalMode() {
     const config = this.props.config;
     //const tokens = this.props.tokens;
-    const {classes, tokens, selections, currentPos,
-           isBlurry, goldAlignment, showFeedback} = this.props;
+    const { classes, tokens, selections, currentPos,
+      isBlurry, goldAlignment, showFeedback } = this.props;
     const selection = selections[currentPos];
 
     var tokenChips = [];
-    for (var idx = 0; idx < tokens.length; idx++){
+    for (var idx = 0; idx < tokens.length; idx++) {
       var chip;
       var className = `${classes.token}`;
 
       // if tokens[idx] is blurry.
       if (isBlurry[idx])
         className += ` ${classes.blurryToken}`;
-      else if (isBlurry.some(b => b)){
+      else if (isBlurry.some(b => b)) {
         className += ` ${classes.activeToken}`;
         chip = <TokenChip
-                  key={idx} idx={idx} token={tokens[idx]}
-                  style={{fontSize: this.props.fontSize}}
-                  className={className}
-                  handleHoverOn={this.handleHoverOn(idx)}
-                  handleHoverOff={this.handleHoverOff}
-                  color="primary" />
+          key={idx} idx={idx} token={tokens[idx]}
+          style={{ fontSize: this.props.fontSize }}
+          className={className}
+          handleHoverOn={this.handleHoverOn(idx)}
+          handleHoverOff={this.handleHoverOff}
+          color="primary" />
         tokenChips.push(chip);
         continue;
       }
@@ -157,42 +157,48 @@ class TargetLangPanel extends React.Component {
         // But still clssName need to be updated to trigger render.
         className += ` ${classes.activeToken}`;
         chip = <TokenChip
-                  key={idx} idx={idx} token={tokens[idx]}
-                  style={{fontSize: this.props.fontSize}}
-                  className={className}
-                  handleHoverOn={this.handleHoverOn(idx)}
-                  handleHoverOff={this.handleHoverOff}
-                  color="primary"
-                  onClick={this.handleClick(idx)} />
+          key={idx} idx={idx} token={tokens[idx]}
+          style={{ fontSize: this.props.fontSize }}
+          className={className}
+          handleHoverOn={this.handleHoverOn(idx)}
+          handleHoverOff={this.handleHoverOff}
+          color="primary"
+          onClick={this.handleClick(idx)} />
       } else if (config.headInds.size === 0) {
         // headInds empty, and tokens[idx] is selectable.
         chip = <TokenChip
-                  key={idx} idx={idx} token={tokens[idx]}
-                  className={className}
-                  handleHoverOn={this.handleHoverOn(idx)}
-                  handleHoverOff={this.handleHoverOff}
-                  onClick={this.handleClick(idx)}
-                  style={{fontSize: config.fontSize,
-                          backgroundColor: config.colors[idx]}} />
+          key={idx} idx={idx} token={tokens[idx]}
+          className={className}
+          handleHoverOn={this.handleHoverOn(idx)}
+          handleHoverOff={this.handleHoverOff}
+          onClick={this.handleClick(idx)}
+          style={{
+            fontSize: config.fontSize,
+            backgroundColor: config.colors[idx]
+          }} />
       } else if (config.headInds.size > 0 && config.headInds.has(idx)) {
         // headInds not empty, and tokens[idx] is selectable.
         className += ` ${classes.boldedToken}`;
         chip = <TokenChip
-                  key={idx} idx={idx} token={tokens[idx]}
-                  className={className}
-                  handleHoverOn={this.handleHoverOn(idx)}
-                  handleHoverOff={this.handleHoverOff}
-                  onClick={this.handleClick(idx)}
-                  style={{fontSize: config.fontSize,
-                          backgroundColor: config.colors[idx]}} />
+          key={idx} idx={idx} token={tokens[idx]}
+          className={className}
+          handleHoverOn={this.handleHoverOn(idx)}
+          handleHoverOff={this.handleHoverOff}
+          onClick={this.handleClick(idx)}
+          style={{
+            fontSize: config.fontSize,
+            backgroundColor: config.colors[idx]
+          }} />
       } else {
         // tokens[idx] is disabled.
         className += ` ${classes.disabledToken}`;
         chip = <TokenChip
-                  key={idx} idx={idx} token={tokens[idx]}
-                  className={className}
-                  style={{fontSize: config.fontSize,
-                          backgroundColor: config.colors[idx]}} />
+          key={idx} idx={idx} token={tokens[idx]}
+          className={className}
+          style={{
+            fontSize: config.fontSize,
+            backgroundColor: config.colors[idx]
+          }} />
       }
 
       // push `chip` to `tokenChips`.
@@ -201,17 +207,17 @@ class TargetLangPanel extends React.Component {
 
     return (
       <Paper className="panel" elevation={4}>
-        {this.props.config.showTextDirectionButtons?
+        {this.props.config.showTextDirectionButtons ?
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1em' }}>
             <Button variant="outlined"
-                    onClick={this.handleSetTextDirectionLTR}>
+              onClick={this.handleSetTextDirectionLTR}>
               <FormatAlignLeftIcon />
             </Button>
             <Button variant="outlined" color="default"
-                    onClick={this.handleSetTextDirectionRTL}>
+              onClick={this.handleSetTextDirectionRTL}>
               <FormatAlignRightIcon />
             </Button>
-          </div>:
+          </div> :
           null
         }
         <Grid container spacing={2}>
@@ -219,11 +225,11 @@ class TargetLangPanel extends React.Component {
             {tokenChips}
           </Grid>
           <Grid item xs={1}>
-            {this.props.enableRetokenize?
+            {this.props.enableRetokenize ?
               <Button variant="contained" color="primary"
-                      onClick={this.handleEnterEditMode}>
+                onClick={this.handleEnterEditMode}>
                 Re-tokenize
-              </Button>:
+              </Button> :
               null
             }
           </Grid>
@@ -232,7 +238,7 @@ class TargetLangPanel extends React.Component {
     )
   }
 
-  renderEditMode(){
+  renderEditMode() {
     return (
       <Paper className="panel" elevation={4}>
         <Grid container spacing={2}>
@@ -246,12 +252,12 @@ class TargetLangPanel extends React.Component {
           </Grid>
           <Grid item xs={1}>
             <Button variant="contained" color="primary"
-                    onClick={this.handleLeaveEditMode}>
+              onClick={this.handleLeaveEditMode}>
               Save
             </Button>
           </Grid>
         </Grid>
-        <div className="divider"/>
+        <div className="divider" />
 
         <TextField
           id="tarTokensTextField"
