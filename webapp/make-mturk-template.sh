@@ -15,10 +15,10 @@ echo "" >> anno-app-mturk.html
 echo "<script type=\"text/javascript\">" >> anno-app-mturk.html
 cat build/static/js/main.*.js >> anno-app-mturk.html
 echo "</script>" >> anno-app-mturk.html
-echo "" >> anno-app-turkle.html
+echo "" >> anno-app-mturk.html
 
-echo "<script type=\"text/javascript\">" >> anno-app-turkle.html
-cat build/static/js/runtime-main.*.js >> anno-app-turkle.html
-echo "</script>" >> anno-app-turkle.html
+echo "<script type=\"text/javascript\">" >> anno-app-mturk.html
+cat build/static/js/runtime-main.*.js >> anno-app-mturk.html
+echo "</script>" >> anno-app-mturk.html
 
 echo "DONE"
